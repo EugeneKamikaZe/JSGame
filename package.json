@@ -4,7 +4,9 @@
   "scripts": {
     "lint": "eslint src/**/*.js",
     "prettier": "prettier --write .",
-    "dev": "webpack server"
+    "dev": "webpack server",
+    "build:dev": "cross-env NODE_ENV=development webpack",
+    "build": "cross-env NODE_ENV=production webpack"
   },
   "repository": {
     "type": "git",
@@ -19,6 +21,7 @@
   "devDependencies": {
     "@babel/core": "^7.14.6",
     "babel-loader": "^8.2.2",
+    "cross-env": "^7.0.3",
     "css-loader": "^5.2.6",
     "eslint": "^7.29.0",
     "eslint-config-airbnb-base": "^14.2.1",
@@ -33,5 +36,8 @@
     "webpack": "^5.41.0",
     "webpack-cli": "^4.7.2",
     "webpack-dev-server": "^3.11.2"
+  },
+  "dependencies": {
+    "jsgame": "file:"
   }
 }
