@@ -5,7 +5,7 @@
     "lint": "eslint src/**/*.js",
     "prettier": "prettier --write .",
     "dev": "webpack server",
-    "start": "webpack server",
+    "start": "node script/start.js",
     "build:dev": "cross-env NODE_ENV=development webpack",
     "build": "cross-env NODE_ENV=production webpack"
   },
@@ -39,6 +39,8 @@
     "webpack-dev-server": "^3.11.2"
   },
   "dependencies": {
+    "@hapi/hapi": "^20.1.5",
+    "@hapi/inert": "^6.0.3",
     "jsgame": "file:"
   }
 }
