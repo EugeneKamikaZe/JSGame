@@ -1,5 +1,11 @@
 import './index.scss'
 import SenseiWalk from './assets/Male-5-Walk.png'
+import terrainAtlas from './assets/terrain.png'
+import ClientGame from './client/ClientGame'
+
+window.addEventListener('load', () => {
+    ClientGame.init({tagId: 'game'})
+})
 
 const loading = document.getElementById('loading')
 
@@ -55,39 +61,57 @@ document.addEventListener('keyup', keyUpHandler)
 const img = document.createElement('img')
 img.src = SenseiWalk
 
+function walk() {
+    if (upPress) {
+        cycle = (cycle + 1) % shots
+        direction = 144
+        if (pY !== 0) {
+            pY += -10
+        }
+    }
+    if (rightPress) {
+        cycle = (cycle + 1) % shots
+        direction = 96
+        if (pX !== 560) {
+            pX += 10
+        }
+    }
+    if (bottomPress) {
+        cycle = (cycle + 1) % shots
+        direction = 0
+        if (pY !== 550) {
+            pY += 10
+        }
+    }
+    if (leftPress) {
+        cycle = (cycle + 1) % shots
+        direction = 48
+        if (pX !== 0) {
+            pX += -10
+        }
+    }
+
+    ctx.clearRect(0, 0, 600, 600)
+    ctx.drawImage(img, cycle * spriteW, direction, spriteW, spriteH, pX, pY, 48, 48)
+
+    window.requestAnimationFrame(walk)
+}
+
 img.addEventListener('load', () => {
     loading.style.display = 'none'
 
-    setInterval(() => {
-        if (upPress) {
-            cycle = (cycle + 1) % shots
-            direction = 144
-            if (pY !== 0) {
-                pY += -10
-            }
-        }
-        if (rightPress) {
-            cycle = (cycle + 1) % shots
-            direction = 96
-            if (pX !== 560) {
-                pX += 10
-            }
-        }
-        if (bottomPress) {
-            cycle = (cycle + 1) % shots
-            direction = 0
-            if (pY !== 550) {
-                pY += 10
-            }
-        }
-        if (leftPress) {
-            cycle = (cycle + 1) % shots
-            direction = 48
-            if (pX !== 0) {
-                pX += -10
-            }
-        }
-        ctx.clearRect(0, 0, 600, 600)
-        ctx.drawImage(img, cycle * spriteW, direction, spriteW, spriteH, pX, pY, 48, 48)
-    }, 120)
+    window.requestAnimationFrame(walk)
 })
+
+const terrain = document.createElement('img')
+terrain.src = terrainAtlas
+
+// terrain.addEventListener('load', () => {
+//     const {map} = worldCfg
+//     map.forEach((cfgRow, y) => {
+//         cfgRow.forEach((cfgCell, x) => {
+//             const [sX, sY, sW, sH] = sprites.terrain[cfgCell[0]].frames[0]
+//             ctx.drawImage(terrain, sX, sY, sW, sH, x*spriteW, y*spriteH, spriteW, spriteH)
+//         })
+//     })
+// })
