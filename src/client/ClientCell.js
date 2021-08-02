@@ -1,66 +1,84 @@
 import PositionedObject from '../common/PositionedObject';
 import ClientGameObject from './ClientGameObject';
+import ClientPlayer from './ClientPlayer';
 
 class ClientCell extends PositionedObject {
-  constructor(cfg) {
-    super();
-    const { cellWidth, cellHeight } = cfg.world;
+    constructor(cfg) {
+        super();
+        const { cellWidth, cellHeight } = cfg.world;
 
-    Object.assign(
-      this,
-      {
-        cfg,
-        objects: [],
-        x: cellWidth * cfg.cellCol,
-        y: cellWidth * cfg.cellRow,
-        width: cellWidth,
-        height: cellHeight,
-      },
-      cfg,
-    );
+        Object.assign(
+            this,
+            {
+                cfg,
+                objects: [],
+                x: cellWidth * cfg.cellCol,
+                y: cellWidth * cfg.cellRow,
+                width: cellWidth,
+                height: cellHeight,
+                col: cfg.cellCol,
+                row: cfg.cellRow,
+                objectClasses: { player: ClientPlayer },
+            },
+            cfg,
+        );
 
-    this.initGameObjects();
-  }
-
-  initGameObjects() {
-    const { cellCfg } = this;
-
-    this.objects = cellCfg.map((layer, layerId) => layer.map((objCfg) => new ClientGameObject({ cell: this, objCfg, layerId })))
-  }
-
-  render(time, layerId) {
-    const { objects } = this;
-
-    if (objects[layerId]) {
-      objects[layerId].forEach((obj) => obj.render(time))
-    }
-  }
-
-  addGameObject(objToAdd) {
-    const {objects} = this
-    if (objToAdd.layerId === undefined) {
-      objToAdd.layerId = objects.length
+        this.initGameObjects();
     }
 
-    if (!objects[objToAdd.layerId]) {
-      objects[objToAdd.layerId] = []
+    initGameObjects() {
+        const { cellCfg, objectClasses } = this;
+
+        this.objects = cellCfg.map((layer, layerId) =>
+            layer.map((objCfg) => {
+                let ObjectClasses;
+
+                if (objCfg.class) {
+                    ObjectClasses = objectClasses[objCfg.class];
+                } else {
+                    ObjectClasses = ClientGameObject;
+                }
+                return new ObjectClasses({
+                    cell: this,
+                    objCfg,
+                    layerId,
+                });
+            }),
+        );
     }
 
-    objects[objToAdd.layerId].push(objToAdd);
-  }
+    render(time, layerId) {
+        const { objects } = this;
 
-  removeGameObject(objToRemove) {
-    const {objects} = this
-    objects.forEach((layer, layerID) => objects[layerID] = layer.filter((obj) => obj !== objToRemove))
-  }
+        if (objects[layerId]) {
+            objects[layerId].forEach((obj) => obj.render(time));
+        }
+    }
 
-  findObjectsByType(type) {
-    let foundObjects = []
+    addGameObject(objToAdd) {
+        const { objects } = this;
+        if (objToAdd.layerId === undefined) {
+            objToAdd.layerId = objects.length;
+        }
 
-    this.objects.forEach((layer) => foundObjects = [...foundObjects, ...layer].filter((obj) => obj.type === type))
+        if (!objects[objToAdd.layerId]) {
+            objects[objToAdd.layerId] = [];
+        }
 
-    return foundObjects;
-  }
+        objects[objToAdd.layerId].push(objToAdd);
+    }
+
+    removeGameObject(objToRemove) {
+        const { objects } = this;
+        objects.forEach((layer, layerId) => (objects[layerId] = layer.filter((obj) => obj !== objToRemove)));
+    }
+
+    findObjectsByType(type) {
+        let foundobjects = [];
+
+        this.objects.forEach((layer) => (foundobjects = [...foundobjects, ...layer].filter((obj) => obj.type === type)));
+        return foundobjects;
+    }
 }
 
 export default ClientCell;
